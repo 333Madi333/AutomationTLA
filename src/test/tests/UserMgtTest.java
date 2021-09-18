@@ -12,12 +12,12 @@ public class UserMgtTest extends BaseTest {
     @BeforeMethod
     public void setUp(){
         userMngPage = new UserMngPage(driver);
+        userMngPage.UserMngBtn.click();
     }
 
     @Test(testName = "Log in page" , description = "Click and verify the title Login Page", groups = {"smokeTest", "regression"})
     public void test01() {
 
-        userMngPage.UserMngBtn.click();
         String currentWindow = driver.getWindowHandle();
         userMngPage.loginBtn.click();
         userMngPage.switchWindows();
@@ -38,7 +38,6 @@ public class UserMgtTest extends BaseTest {
     @Test(testName = "User DB page", description = "Click and verify the title User DB Page", groups = {"smokeTest", "regression"})
     public void test02() {
 
-        userMngPage.UserMngBtn.click();
         String currentWindow = driver.getWindowHandle();
         userMngPage.accesBtn.click();
         userMngPage.switchWindows();
