@@ -4,10 +4,8 @@ import Base.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pages.HomePage;
 import pages.UserMngPage;
 
-import java.util.Set;
 
 public class UserMgtTest extends BaseTest {
     UserMngPage userMngPage;
@@ -16,49 +14,47 @@ public class UserMgtTest extends BaseTest {
         userMngPage = new UserMngPage(driver);
     }
 
-    @Test(description = "Click and verify the title", groups = {"smokeTest", "regression"})
-    public void test01(){
+    @Test(testName = "Log in page" , description = "Click and verify the title Login Page", groups = {"smokeTest", "regression"})
+    public void test01() {
 
-        userMngPage.click(userMngPage.UserMngBtn);
-        logScreenshot("UserManegementButtent");
-
-        userMngPage.loginBtn.click();
-
+        userMngPage.UserMngBtn.click();
         String currentWindow = driver.getWindowHandle();
-        Set<String> windows = driver.getWindowHandles();
-        for(String eachWindow: windows){
-            if (!eachWindow.equalsIgnoreCase(currentWindow)){
-                driver.switchTo().window(eachWindow);
-            }
-        }
-
-        String actualLogin = driver.getTitle();
+        userMngPage.loginBtn.click();
+        userMngPage.switchWindows();
+        String actual = driver.getTitle();
+        logScreenshot("Login Page");
 
         driver.switchTo().window(currentWindow);
 
-        userMngPage.accesBtn.click();
-        String currentWindow1 = driver.getWindowHandle();
-        Set<String> windows1 = driver.getWindowHandles();
-        for(String eachWindow: windows1){
-            if (!eachWindow.equalsIgnoreCase(currentWindow)){
-                driver.switchTo().window(eachWindow);
-            }
-        }
-        String actualUserDB = driver.getTitle();
+        String expected = "Login Page";
 
-        String expectedlLogin = "Login Page";
-        String expectedUserDB = "User DB";
-
-        Assert.assertEquals(actualLogin,expectedlLogin);
-        Assert.assertEquals(actualUserDB,expectedUserDB);
+        Assert.assertEquals(actual, expected);
 
         extentTest.assignAuthor("Madi");
         extentTest.assignDevice("Windows PC");
-        extentTest.info("Login page title");
-        extentTest.pass(expectedlLogin);
-        extentTest.info("User DB page title");
-        extentTest.pass(expectedUserDB);
 
+        extentTest.pass("Login page title | " + expected);
+    }
+    @Test(testName = "User DB page", description = "Click and verify the title User DB Page", groups = {"smokeTest", "regression"})
+    public void test02() {
+
+        userMngPage.UserMngBtn.click();
+        String currentWindow = driver.getWindowHandle();
+        userMngPage.accesBtn.click();
+        userMngPage.switchWindows();
+        String actual = driver.getTitle();
+        logScreenshot("User DB Page");
+
+        driver.switchTo().window(currentWindow);
+
+        String expected = "User DB";
+
+        Assert.assertEquals(actual, expected);
+
+        extentTest.assignAuthor("Madi");
+        extentTest.assignDevice("Windows PC");
+
+        extentTest.pass("User DB page title | " + expected);
     }
 
 }

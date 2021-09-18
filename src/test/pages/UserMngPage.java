@@ -16,7 +16,6 @@ public class UserMngPage extends BasePage {
     }
 
 
-
     @FindBy(xpath = "//a[text()='User-Mgt']")
     public WebElement UserMngBtn;
 

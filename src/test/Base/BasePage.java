@@ -7,6 +7,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Set;
+
 public class BasePage {
     private WebDriver driver;
 
@@ -56,6 +58,17 @@ public class BasePage {
 
     public void moveIntoView(WebElement element){
         ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
+    public void switchWindows (){
+        String currentWindow = driver.getWindowHandle();
+        Set<String> windows = driver.getWindowHandles();
+        for(String eachWindow: windows){
+            if (!eachWindow.equalsIgnoreCase(currentWindow)){
+                driver.switchTo().window(eachWindow);
+            }
+        }
+
     }
 
     public void highlightElement(WebElement element){

@@ -10,29 +10,27 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.*;
 import utils.ConfigReader;
 import utils.Screenshot;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 public class BaseTest {
     public WebDriver driver;
-    protected ExtentReports extentReport;
+    protected ExtentReports extentReports;
     protected ExtentTest extentTest;
 
     String configFilePath = "src/test/data/conf/config.properties";
 
     @BeforeMethod(groups = "smokeTest")
-    public void SetUp() {
-        extentTest = extentReport.createTest("Verify New User Tests");
+    public void SetUp(Method method) {
         initializeDriver(ConfigReader.readProperty(configFilePath, "browser"));
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-
+        extentTest = extentReports.createTest(getCustomTestName(method));
+        logTestGroups(method);
         driver.get(ConfigReader.readProperty(configFilePath, "url"));
        }
 
@@ -43,18 +41,18 @@ public class BaseTest {
 
     @BeforeSuite
     public void startReporter() {
-        extentReport = new ExtentReports();
+        extentReports = new ExtentReports();
         ExtentSparkReporter spark = new ExtentSparkReporter("reports.html");
 
         spark.config().setTheme(Theme.DARK);
         spark.config().setDocumentTitle("MyReport");
         spark.config().setReportName("TLA Tests");
-        extentReport.attachReporter(spark);
+        extentReports.attachReporter(spark);
     }
 
     @AfterSuite
     public void closeReporter() {
-        extentReport.flush();
+        extentReports.flush();
     }
 
     public void initializeDriver(String browser) {
@@ -81,4 +79,20 @@ public class BaseTest {
     public void logScreenshot(){
         extentTest.info(MediaEntityBuilder.createScreenCaptureFromBase64String(Screenshot.takeScreenshot(driver)).build());
     }
+
+    public void logTestGroups(Method method){
+        Test testClass = method.getAnnotation(Test.class);
+        for(String e: testClass.groups()){
+            extentTest.assignCategory(e);
+        }
+    }
+
+    public String getCustomTestName(Method method){
+        Test testClass = method.getAnnotation(Test.class);
+
+        if(testClass.testName().length() > 0)
+            return testClass.testName();
+        return method.getName();
+    }
+
 }
